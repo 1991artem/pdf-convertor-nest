@@ -1,0 +1,93 @@
+{
+  "name": "crm-nest",
+  "version": "0.0.1",
+  "description": "",
+  "author": "",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "prebuild": "engine-version",
+    "build": "nest build",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "start": "nest start",
+    "start:dev": "nest start --watch",
+    "start:debug": "nest start --debug --watch",
+    "start:prod": "node dist/main",
+    "lint": "eslint \"src/**/*.ts\"",
+    "lintfix": "eslint \"src/**/*.ts\" --fix",
+    "crud": "nest g resource",
+    "typeorm": "typeorm-ts-node-esm",
+    "migrate:create": "npx typeorm migration:create ./src/migrations/migrations",
+    "migrate:run": "npx typeorm migration:run -- -d ./src/data-source.ts",
+    "migrate:revert": "npx typeorm migration:revert -- -d ./src/data-source.ts",
+    "precommit": "yarn run lint",
+    "prepare": "husky install"
+  },
+  "dependencies": {
+    "@nestjs/common": "^9.3.2",
+    "@nestjs/core": "^9.3.2",
+    "@nestjs/jwt": "^10.0.1",
+    "@nestjs/platform-express": "^9.3.8",
+    "@nestjs/serve-static": "^3.0.1",
+    "@nestjs/swagger": "^6.1.4",
+    "@nestjs/typeorm": "^9.0.1",
+    "@types/cookie-parser": "^1.4.3",
+    "bcryptjs": "^2.4.3",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
+    "cookie-parser": "^1.4.6",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.0.3",
+    "engine-version": "^1.0.2",
+    "express": "^4.18.2",
+    "html-pdf": "^3.0.1",
+    "husky": "^8.0.3",
+    "iconv-lite": "^0.6.3",
+    "mammoth": "^1.5.1",
+    "pg": "^8.9.0",
+    "phantom-html-to-pdf": "^0.7.0",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.8.0",
+    "typeorm": "^0.3.11",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^9.0.0",
+    "@nestjs/schematics": "^9.0.0",
+    "@types/express": "^4.17.13",
+    "@types/html-pdf": "^3.0.0",
+    "@types/multer": "^1.4.7",
+    "@types/node": "18.11.18",
+    "@types/uuid": "^9.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^8.0.1",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.3.2",
+    "ts-loader": "^9.2.3",
+    "ts-node": "^10.0.0",
+    "tsconfig-paths": "4.1.1",
+    "typescript": "^4.7.4"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node",
+    "engines": {
+      "node": ">=16.4.2"
+    }
+  }
+}
