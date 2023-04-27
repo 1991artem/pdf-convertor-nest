@@ -1,52 +1,84 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
+  HttpCode,
   Param,
   ParseFilePipeBuilder,
   Post,
-  Req,
+  Query,
+  Res,
   UploadedFile,
-  UseGuards,
   UseInterceptors,
+  ValidationPipe,
 } from '@nestjs/common';
-import { Request } from 'express';
+import { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { JwtGuard } from '../../service';
 import { FileService } from './file.service';
-import { FindByIdParams, IConvertBody } from './dto';
+import {
+  ConvertFileBody,
+  FindByIdBody,
+  UploadBody,
+  UploadBodyFromStorage,
+  UploadPDFParams,
+  UploadPDFQuery,
+} from './dto';
 
 @ApiTags('File')
 @Controller('api/file')
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
-  @UseGuards(JwtGuard)
   @ApiOperation({ summary: 'Upload txt file' })
-  @Post()
+  @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   uploadFile(
     @UploadedFile(new ParseFilePipeBuilder().build())
     file: Express.Multer.File,
-    @Req() request: Request,
-    @Body() body: IConvertBody,
+    @Body(new ValidationPipe()) { body }: { body: UploadBody },
   ) {
-    const dictionary = JSON.parse(body.dictionary);
-    const user = request.user;
-    if (!user) {
-      throw new BadRequestException({
-        message: 'Invalid Cookie',
-      });
-    }
-    return this.fileService.uploadFile(file, user, dictionary);
+    return this.fileService.uploadFile(file, body);
   }
 
-  @UseGuards(JwtGuard)
-  @ApiOperation({ summary: 'Upload txt file' })
-  @Get('user/:id')
-  getFilesByUserId(@Param() { id }: FindByIdParams) {
-    return this.fileService.getFilesByUserId(Number(id));
+  @ApiOperation({ summary: 'Get list files by user id' })
+  @HttpCode(200)
+  @Post()
+  getFilesByUserId(@Body(new ValidationPipe()) body: FindByIdBody) {
+    return this.fileService.getFilesByUserId(body);
+  }
+
+  @ApiOperation({ summary: 'Download file from storage' })
+  @Post('download/storage')
+  downloadFileFromStorage(
+    @Body(new ValidationPipe()) body: UploadBodyFromStorage,
+  ) {
+    return this.fileService.downloadFileFromStorage(
+      body.fileName,
+      body.userKey,
+    );
+  }
+
+  @ApiOperation({ summary: 'Download PDF file from storage' })
+  @Get('download/pdf/:fileName')
+  downloadPDFFileFromStorage(
+    @Res() response: Response,
+    @Param() { fileName }: UploadPDFParams,
+    @Query() { key }: UploadPDFQuery,
+  ) {
+    const path = this.fileService.downloadPDFFileFromStorage(
+      fileName,
+      key,
+    );
+    response.sendFile(path);
+  }
+
+  @ApiOperation({ summary: 'Convert file to PDF' })
+  @Post('convert')
+  convertFileToPDF(
+    @Body(new ValidationPipe())
+    { template, dictionary, userKey }: ConvertFileBody,
+  ) {
+    return this.fileService.convertFileToPDF(template, dictionary, userKey);
   }
 }

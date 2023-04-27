@@ -17,8 +17,11 @@ export default class File extends BaseEntity {
   @Column()
   name: string;
 
-  @Column({ nullable: true })
+  @Column()
   path: string;
+
+  @Column()
+  converted: boolean;
 
   @CreateDateColumn()
   createdAt: Date;
